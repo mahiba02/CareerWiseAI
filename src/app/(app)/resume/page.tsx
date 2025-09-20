@@ -144,6 +144,27 @@ export default function ResumePage() {
     },
   });
 
+  // Sync resume skills (flat or grouped) into localStorage for cross-page prefill
+  const flatSkills = form.watch('skills');
+  const groups = form.watch('skillGroups');
+  React.useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return;
+      const groupVals = groups ? Object.values(groups).filter(Boolean) : [];
+      const merged = [flatSkills, ...groupVals].filter(Boolean).join(', ');
+      const cleaned = merged
+        .split(',')
+        .map(s => s.trim())
+        .filter((s, i, arr) => s && arr.indexOf(s) === i)
+        .join(', ');
+      if (cleaned) {
+        localStorage.setItem('resumeSkills', cleaned);
+      } else {
+        localStorage.removeItem('resumeSkills');
+      }
+    } catch {}
+  }, [flatSkills, groups]);
+
   // ----- Field Arrays -----
   const experienceArray = useFieldArray({ control: form.control, name: 'experience' as const });
   const projectsArray = useFieldArray({ control: form.control, name: 'projects' as const });

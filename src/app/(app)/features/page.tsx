@@ -23,7 +23,7 @@ const features = [
     },
     {
         title: "Job Market Insights",
-        description: "Get real-time insights into the job market, including trends, skills in demand, and salary benchmarks.",
+        description: "Get real-time insights into salaries, skills demand, and job growth across locations and industries.",
         href: "/insights",
         icon: <TrendingUp className="w-8 h-8 text-primary" />,
     },

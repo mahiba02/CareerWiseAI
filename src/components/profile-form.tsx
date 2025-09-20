@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,6 +53,20 @@ export default function ProfileForm() {
       skills: "",
     },
   });
+
+  // Persist skills locally so other pages (Insights) can prefill recommendations
+  const skillsWatch = form.watch("skills");
+  useEffect(() => {
+    try {
+      if (typeof window === "undefined") return;
+      const v = (skillsWatch ?? "").trim();
+      if (v) {
+        localStorage.setItem("profileSkills", v);
+      } else {
+        localStorage.removeItem("profileSkills");
+      }
+    } catch {}
+  }, [skillsWatch]);
 
   const onSubmit = (values: ProfileFormValues) => {
     setProgress(5);
