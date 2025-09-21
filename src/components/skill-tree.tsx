@@ -17,6 +17,10 @@ type SkillTreeProps = {
 };
 
 const TreeNode = ({ node, isLast }: { node: SkillNode; isLast: boolean }) => {
+  if (!node) {
+    return null;
+  }
+  
   const hasChildren = node.children && node.children.length > 0;
   const Icon = hasChildren ? Folder : FileText;
 
@@ -61,7 +65,7 @@ const TreeNode = ({ node, isLast }: { node: SkillNode; isLast: boolean }) => {
             {hasChildren && (
               <div className="pt-2">
                 {node.children?.map((child, index) => (
-                  <TreeNode key={index} node={child} isLast={index === node.children!.length - 1} />
+                  <TreeNode key={index} node={child} isLast={index === (node.children?.length || 1) - 1} />
                 ))}
               </div>
             )}
