@@ -82,3 +82,16 @@
     @apply bg-background text-foreground font-body;
   }
 }
+
+/* Mindmap specific styles to prevent browser zoom */
+.mindmap-container {
+  touch-action: pan-x pan-y;
+  overflow: hidden;
+}
+
+.mindmap-container * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}

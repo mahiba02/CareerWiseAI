@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BookOpen, Compass, FileText, Route, TrendingUp } from "lucide-react";
+import { ArrowRight, BookOpen, Compass, FileText, TrendingUp, Brain } from "lucide-react";
 import Link from "next/link";
 
 const features = [
@@ -10,16 +10,16 @@ const features = [
         icon: <Compass className="w-8 h-8 text-primary" />,
     },
     {
+        title: "Skill Learning Tree",
+        description: "Get an interactive tree structure that breaks down any skill from basics to mastery with detailed progression.",
+        href: "/mindmap",
+        icon: <Brain className="w-8 h-8 text-primary" />,
+    },
+    {
         title: "Resource Recommendations",
         description: "Find the best YouTube videos, courses, and books to learn a new skill.",
         href: "/resources",
         icon: <BookOpen className="w-8 h-8 text-primary" />,
-    },
-    {
-        title: "Roadmap Provider",
-        description: "Get a step-by-step learning roadmap from your profile and interests.",
-        href: "/roadmap",
-        icon: <Route className="w-8 h-8 text-primary" />,
     },
     {
         title: "Job Market Insights",

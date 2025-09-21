@@ -56,61 +56,6 @@ const GeneratePersonalizedCareerReportOutputSchema = z.object({
 });
 export type GeneratePersonalizedCareerReportOutput = z.infer<typeof GeneratePersonalizedCareerReportOutputSchema>;
 
-function buildFallbackReport(input: GeneratePersonalizedCareerReportInput): GeneratePersonalizedCareerReportOutput {
-  const skills = input.profile.skills || '';
-  const firstSkill = skills.split(',')[0]?.trim() || 'Problem Solving';
-  return {
-    careerRecommendations: [
-      { title: 'AI Engineer', description: 'Apply machine learning to build intelligent systems.' },
-      { title: 'Data Analyst', description: 'Analyze data to inform decisions and strategy.' },
-      { title: 'Cloud Solutions Architect', description: 'Design scalable cloud infrastructure.' },
-    ],
-    fitReasoning: [
-      { title: 'AI Engineer', reason: `Your background and interest in ${firstSkill} align with AI-focused roles.` },
-      { title: 'Data Analyst', reason: 'Strong analytical thinking and curiosity suit data analysis.' },
-      { title: 'Cloud Solutions Architect', reason: 'You show aptitude for systems design and tooling.' },
-    ],
-    learningPlans: [
-      {
-        skill: firstSkill,
-        plan: Array.from({ length: 7 }, (_, i) => ({ day: i + 1, task: `Study ${firstSkill} topic ${i + 1}.` })),
-      },
-      {
-        skill: 'SQL',
-        plan: Array.from({ length: 7 }, (_, i) => ({ day: i + 1, task: `Practice SQL queries set ${i + 1}.` })),
-      },
-      {
-        skill: 'Terraform',
-        plan: Array.from({ length: 7 }, (_, i) => ({ day: i + 1, task: `Build an IaC module part ${i + 1}.` })),
-      },
-    ],
-    skillTree: {
-      title: `Skill Tree for AI Engineer`,
-      root: {
-        name: 'AI Engineer Skills',
-        description: 'Essential skills from fundamentals to applied ML to get started.',
-        children: [
-          {
-            name: 'Programming & Foundations',
-            description: 'Python and SQL are foundational for data and ML workflows.',
-            children: [
-              { name: 'Python', projectIdea: 'Build a CLI that analyzes CSVs and summarizes stats.' },
-              { name: 'SQL', projectIdea: 'Write queries to explore a sample e-commerce dataset.' },
-            ],
-          },
-          {
-            name: 'Machine Learning Basics',
-            description: 'Core ML concepts and classic models before deep learning.',
-            children: [
-              { name: 'Regression & Classification', projectIdea: 'Predict house prices using scikit-learn.' },
-            ],
-          },
-        ],
-      },
-    },
-  };
-}
-
 async function retryWithBackoff<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
   let lastErr: any;
   for (let i = 0; i < attempts; i++) {
@@ -130,18 +75,13 @@ async function retryWithBackoff<T>(fn: () => Promise<T>, attempts = 3): Promise<
   throw lastErr;
 }
 
-export async function generatePersonalizedCareerReport(input: GeneratePersonalizedCareerReportInput): Promise<GeneratePersonalizedCareerReportOutput> {
-  const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY);
-  if (!hasGeminiKey) {
-    // Deterministic mock so the UI works without an API key
-    return buildFallbackReport(input);
-  }
-  try {
-    return await retryWithBackoff(() => generatePersonalizedCareerReportFlow(input), 3);
-  } catch (err) {
-    console.warn('AI model unavailable, returning fallback report:', err);
-    return buildFallbackReport(input);
-  }
+export async function generatePersonalizedCareerReport(
+  input: GeneratePersonalizedCareerReportInput,
+): Promise<GeneratePersonalizedCareerReportOutput> {
+  return await retryWithBackoff(
+    () => generatePersonalizedCareerReportFlow(input),
+    3,
+  );
 }
 
 const prompt = ai.definePrompt({
